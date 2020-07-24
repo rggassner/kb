@@ -7,6 +7,7 @@ import json
 import time
 from selenium.common.exceptions import StaleElementReferenceException
 from urllib.parse import urlparse
+from collections import Counter
 import unidecode
 
 chrome_options = webdriver.ChromeOptions()
@@ -22,7 +23,7 @@ initialURL="http://www.mysite.org/"
 expressionDomain=r'^http://www.mysite.org/'
 visited=set()
 tovisit=set()
-wordDB={}
+wordDB = Counter()
 tovisit.add(initialURL)
 def extractAllLinks(browser,tovisit,visited):
     for link in browser.find_elements_by_xpath("//a[@href]"):
@@ -39,12 +40,8 @@ def extractAllWords(browser,wordDB):
     for element in browser.find_elements_by_xpath("//*[contains(text(), '')]"):
         for word in element.text.split():
             word = ''.join([i for i in word if i.isalpha()])
-            word = unidecode.unidecode(word)
-            word = word.lower()
-            if word in wordDB:
-                wordDB[word] = wordDB[word] + 1
-            else:
-                wordDB[word] = 1
+            word = unidecode.unidecode(word).lower()
+            wordDB[word] += 1
 
 def set_default(obj):
     if isinstance(obj, set):
