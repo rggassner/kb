@@ -1,0 +1,2 @@
+all,ipv4
+filter1,net 10.10.10.0/24 or net 10.10.20.0/24

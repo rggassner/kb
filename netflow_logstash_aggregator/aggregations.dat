@@ -1,0 +1,17 @@
+proto
+srcip
+dstip
+srcip,dstip
+srcport
+dstport
+srcmask
+inif
+outif
+proto,srcip,dstip,srcport,dstport
+proto,srcip
+proto,dstip
+proto,srcip,dstip
+srcip,dstip,dstport
+srcip,dstip,srcport
+srcip,dstport
+dstip,dstport

@@ -1,0 +1,3 @@
+#sender name, port, forward flows to, port
+sender_name_1,6666,10.10.10.1,2020
+sender_name_2,6667,10.10.10.1,2020
