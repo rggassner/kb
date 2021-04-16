@@ -20,3 +20,11 @@ export DISPLAY=:99
 pkill -f "Xvfb :99 -ac"
 ```
 
+# Clonezilla
+
+Decompressing and mounting a clonezilla backup file
+
+```
+cat sdb1.ntfs-ptcl-img.gz.* | gunzip | partclone.restore --restore_raw_file -C -s - -o sdb1.ntfs.img
+mount /dev/sdb1 /mnt/sdb1
+```
