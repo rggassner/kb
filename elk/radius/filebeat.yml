@@ -1,0 +1,11 @@
+filebeat.inputs:
+- type: log
+  enabled: true
+  paths:
+    - /var/log/radius/radius.log
+  fields:
+    dradius: true
+  fields_under_root: true
+
+output.logstash:
+  hosts: ["server:5000"]
