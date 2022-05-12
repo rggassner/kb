@@ -1,0 +1,3 @@
+TIPO (Login incorrect|Invalid user|Login OK|Received HUP signal|HUP - No files changed.  Ignoring)
+RADIUSLOGDATE %{DAY} %{MONTH}  ?%{MONTHDAY} %{TIME} %{YEAR}
+RADIUSLOGTYPE (Auth|Error|Info|ERROR)
