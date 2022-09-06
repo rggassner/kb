@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 #Rafael Gustavo Gassner - 08/2019
 #Script to identify the first of the 5 seconds with the most total sync without acks
 import sys
@@ -11,8 +11,8 @@ output_dic={}
 
 def smtm(input_dic):
     for second in input_dic:
-	total_out=0
-	count=0
+        total_out=0
+        count=0
         while count <= 4:
             if str(int(second)+count) in input_dic:
                 total_out+=input_dic[str(int(second)+count)]
@@ -21,7 +21,7 @@ def smtm(input_dic):
 
 def slargest(output_dic):
     for time in output_dic:
-	max_second=max(output_dic.iteritems(), key=operator.itemgetter(1))[0]
+        max_second=max(output_dic.items(), key=operator.itemgetter(1))[0]
     print('{} {}'.format(output_dic[max_second],max_second))
 
 for line in sys.stdin:
