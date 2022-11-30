@@ -61,6 +61,10 @@
 
   Tools - pagodo
   
+16. Search for public exposed and password protected documents (pdf, zip, etc) hosted in the domain, and brute force documents.
+
+  Tools - crawling2sqlite, hashcat
+  
 # Got milk?
 
 1. Check for interfaces addresses and evaluate pivoting.
