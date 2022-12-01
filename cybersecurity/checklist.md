@@ -9,60 +9,64 @@ Repeat tests for ips and domains.
 2. Check if domain resolves for multiple ip addresses (round robin), and list observed addresses.
 
   Tools - ping
+  
+3. Brute force subdomains
+
+  Tools - FFUF
    
-3. Check for opened ports. 
+4. Check for opened ports. 
 
   Tools - nmap (-sV --open -sT)
    
-4. Check for robots.txt
+5. Check for robots.txt
 
   Tools - Browser, wget, curl
   
-5. Crawl website within domain in scope.
+6. Crawl website within domain in scope.
 
   Tools - Crawling2sqlite
 
-6. Brute force for directories, files and parameters.
+7. Brute force for directories, files and parameters.
 
   Tools - dirsearch, dirb, dirbuster
   
-7. Inspect page objects.
+8. Inspect page objects.
 
   Tools - Browser
 
-8. Check for directory traversal candidates.
+9. Check for directory traversal candidates.
 
   Tools - Browser. Yummy files: passwd, cron, vi history, bash history, profile, shadow, logs
   
-9. Check for product vulnerability if any description was found in nmap.
+10. Check for product vulnerability if any description was found in nmap.
 
   Tools - https://www.cvedetails.com/
 
-10. Check if authentication error message returns valuable information for user enumeration.
+11. Check if authentication error message returns valuable information for user enumeration.
 
   Tools - Browser
 
-11. Check for weak users/passwords.
+12. Check for weak users/passwords.
 
   Tools - hydra
   
-12. Check for user enumeration in email addresses or other content in crawler database.
+13. Check for user enumeration in email addresses or other content in crawler database.
 
   Tools - crawling2sqlite
   
-13. Check for sqlinjection
+14. Check for sqlinjection
 
   Tools - sqlmap
   
-14. Check for XSS
+15. Check for XSS
 
   Tools - browser
   
-15. Check for google dorking existence
+16. Check for google dorking existence
 
   Tools - pagodo
   
-16. Search for public exposed and password protected documents (pdf, zip, etc) hosted in the domain, and brute force documents.
+17. Search for public exposed and password protected documents (pdf, zip, etc) hosted in the domain, and brute force documents.
 
   Tools - crawling2sqlite, hashcat
   
