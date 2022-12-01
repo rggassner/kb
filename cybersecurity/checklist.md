@@ -1,5 +1,6 @@
 # Surface analysis 
 
+Repeat tests for ips and domains.
 
 1. Check for IPV4 and IPV6 availability. Repeat every check on each stack.
 
