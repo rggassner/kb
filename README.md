@@ -28,3 +28,15 @@ Decompressing and mounting a clonezilla backup file
 cat sdb1.ntfs-ptcl-img.gz.* | gunzip | partclone.restore --restore_raw_file -C -s - -o sdb1.ntfs.img
 mount /dev/sdb1 /mnt/sdb1
 ```
+
+# Windows
+
+Manually configuring windows 11 ntp servers
+
+```
+net stop w32time
+w32tm /config /syncfromflags:manual /manualpeerlist:"0.it.pool.ntp.org 1.it.pool.ntp.org 2.it.pool.ntp.org 3.it.pool.ntp.org"
+net start w32time
+w32tm /config /update
+w32tm /resync /rediscover
+```
