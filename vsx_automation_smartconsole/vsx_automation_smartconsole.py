@@ -247,7 +247,7 @@ def read_routes4():
     f=open('routesv4.txt','r')
     for line in f:
         line=line.strip()
-        is_route=re.search(r'^(.*?)\s+(.*?)\s+(.*?)\s+UG\s.*',line)
+        is_route=re.search(r'^(.*?)\s+(.*?)\s+(.*?)\s+UGH?\s.*',line)
         if is_route:
             if is_route.group(1) == '0.0.0.0' and is_route.group(3) == '0.0.0.0':
                 route4_list.append({'net':is_route.group(1),'nhop':is_route.group(2),'mask':is_route.group(3), 'is_default':True})
@@ -257,7 +257,7 @@ def read_routes6():
     f=open('routesv6.txt','r')
     for line in f:
         line=line.strip()
-        is_route=re.search(r'^(.*?)/(.*?)\s+(.*?)\s+UG\s.*',line)
+        is_route=re.search(r'^(.*?)/(.*?)\s+(.*?)\s+UGH?\s.*',line)
         if is_route:
             if is_route.group(1) == '::' and is_route.group(2) == '0':
                 route6_list.append({'net':is_route.group(1),'nhop':is_route.group(3),'mask':is_route.group(2), 'is_default':True})
