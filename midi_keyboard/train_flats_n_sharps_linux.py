@@ -1,0 +1,66 @@
+import random
+import mido
+import pyttsx3
+import time
+
+NOTES_SHARP = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B']
+NOTES_FLAT = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B']
+
+def get_note_from_midi(midi_number):
+    if not (0 <= midi_number <= 127):
+        print('MIDI number out of range (0-127)')
+        return None
+
+    octave = (midi_number // 12) - 1
+    note_index = midi_number % 12
+
+    # Determine whether to use sharp or flat based on the note index
+    sharp_note = NOTES_SHARP[note_index]
+    flat_note = NOTES_FLAT[note_index]
+
+    return sharp_note, flat_note
+
+def get_random_note():
+    return random.choice(NOTES_SHARP + NOTES_FLAT)
+
+# Use pyttsx3 for text-to-speech on Linux
+speaker = pyttsx3.init()
+out_port = mido.open_output()
+
+# Adjust the input port name based on your MIDI device
+input_port_name = "Digital Keyboard MIDI 1"
+
+with mido.open_input(input_port_name) as inport:
+    start_time = time.time()
+    counter = 0
+
+    while True:
+        note_to_guess = get_random_note()
+        if '#' in note_to_guess:
+            suffix = 'Sharp'
+        elif 'b' in note_to_guess:
+            suffix = 'Flat'
+        else:
+            suffix = ''
+        print(f"{note_to_guess[0]} {suffix}")
+        speaker.say(f"{note_to_guess[0]} {suffix}")
+        speaker.runAndWait()
+
+        correct_note_received = False
+        for msg in inport:
+            if msg.type == 'note_on':
+                received_sharp, received_flat = get_note_from_midi(msg.note)
+                if received_sharp.upper() == note_to_guess.upper() or received_flat.upper() == note_to_guess.upper():
+                    correct_note_received = True
+                    break
+
+        if correct_note_received:
+            counter += 1
+            if counter > 10:
+                end_time = time.time()
+                interval_seconds = end_time - start_time
+                speaker.say(f'Congratulations, it took you {int(interval_seconds)} seconds!')
+                speaker.runAndWait()
+                print(f'Congratulations, it took you {int(interval_seconds)} seconds!')
+                quit()
+
