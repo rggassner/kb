@@ -1,4 +1,5 @@
 #!venv/bin/python3
+import re
 import sys
 import os # Required for creating directories and joining paths
 import ldap # New import for LDAP operations
@@ -83,11 +84,17 @@ def parse_ldap_entries_and_extract_attributes(ldap_entries, attributes_to_extrac
     
     return organized_data
 
+def sanitize_yaml_value(value):
+    # Remove control characters (except tab, newline, carriage return)
+    value = re.sub(r'[^\x09\x0A\x0D\x20-\x7E]', '', value)
+    # Escape double quotes and backslashes
+    value = value.replace('\\', '\\\\').replace('"', '\\"')
+    return value
 
 if __name__ == "__main__":
     # LDAP Connection Parameters - IMPORTANT: Customize these for your LDAP server!
     # For production use, consider loading these from environment variables or a secure configuration file.
-    LDAP_HOST = 'ldap.yourdomain' # Replace with your LDAP server's hostname or IP address
+    LDAP_HOST = 'ldap.server' # Replace with your LDAP server's hostname or IP address
     LDAP_PORT = 636        # Replace with your LDAP server's port (e.g., 636 for LDAPS)
     LDAP_SEARCH_BASE = 'dc=com,dc=br' # Replace with the base DN for your search (e.g., 'ou=Users,dc=example,dc=com')
     LDAP_SEARCH_FILTER = '(objectClass=posixAccount)' # LDAP filter to select entries (e.g., all user accounts)
@@ -206,7 +213,9 @@ if __name__ == "__main__":
                         # Write each uid-value pair to the file
                         for uid, value in uid_value_map.items():
                             # Format each line as a YAML key-value pair: "uid": "attribute_value"
-                            f_out.write(f'"{uid}": "{value}"\n')
+                            clean_uid = sanitize_yaml_value(uid)
+                            clean_value = sanitize_yaml_value(value)
+                            f_out.write(f'"{clean_uid}": "{clean_value}"\n')
                     print(f"Successfully generated '{output_filename}'")
                 except Exception as e:
                     print(f"Error writing to output file '{output_filename}': {e}")
