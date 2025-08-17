@@ -4,6 +4,12 @@ import sys
 import os # Required for creating directories and joining paths
 import ldap # New import for LDAP operations
 import ldap.filter # Useful for LDAP filter escaping, though not strictly used in this version
+import time
+
+# Define which epoch-based fields should have age calculated
+epoch_variables_calculate_age = [
+    "LastPasswdChange",  # example: epoch in seconds
+]
 
 def parse_ldap_entries_and_extract_attributes(ldap_entries, attributes_to_extract):
     """
@@ -198,29 +204,45 @@ if __name__ == "__main__":
         extracted_data = parse_ldap_entries_and_extract_attributes(main_ldap_results, attributes_to_extract)
 
         if extracted_data:
-            # Define the directory where the output YAML files will be saved.
             output_directory = "output_yaml_files"
-            # Create the output directory if it doesn't already exist.
             os.makedirs(output_directory, exist_ok=True)
 
-            # Iterate through the organized data (attribute by attribute)
+            now_epoch = int(time.time())
+
             for attr_name, uid_value_map in extracted_data.items():
-                # Construct the output filename based on the attribute name
+                # Write the normal attribute file
                 output_filename = os.path.join(output_directory, f"{attr_name}.yml")
                 try:
-                    # Open the output file in write mode
                     with open(output_filename, 'w', encoding='utf-8') as f_out:
-                        # Write each uid-value pair to the file
                         for uid, value in uid_value_map.items():
-                            # Format each line as a YAML key-value pair: "uid": "attribute_value"
                             clean_uid = sanitize_yaml_value(uid)
                             clean_value = sanitize_yaml_value(value)
                             f_out.write(f'"{clean_uid}": "{clean_value}"\n')
                     print(f"Successfully generated '{output_filename}'")
                 except Exception as e:
                     print(f"Error writing to output file '{output_filename}': {e}")
-        else:
-            print("No data extracted or an error occurred during parsing. No output files were generated.")
+
+                # If this attribute is in the epoch list, calculate age
+                if attr_name in epoch_variables_calculate_age:
+                    age_filename = os.path.join(output_directory, f"{attr_name}_age_in_seconds.yml")
+                    try:
+                        with open(age_filename, 'w', encoding='utf-8') as f_age:
+                            for uid, value in uid_value_map.items():
+                                clean_uid = sanitize_yaml_value(uid)
+                                try:
+                                    epoch_val = int(value)
+                                    if epoch_val > 0:
+                                        age_seconds = now_epoch - epoch_val
+                                        f_age.write(f'"{clean_uid}": "{age_seconds}"\n')
+                                    else:
+                                        f_age.write(f'"{clean_uid}": ""\n')
+                                except ValueError:
+                                    # Non-numeric or empty value → empty output
+                                    f_age.write(f'"{clean_uid}": ""\n')
+                        print(f"Successfully generated '{age_filename}'")
+                    except Exception as e:
+                        print(f"Error writing to output file '{age_filename}': {e}")
+
 
     except ldap.SERVER_DOWN as e:
         print(f"LDAP Error (Second Pass): Could not connect to the LDAP server. Please check host, port, and network connectivity. Error: {e}")
