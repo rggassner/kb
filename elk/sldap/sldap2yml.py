@@ -8,7 +8,7 @@ import time
 
 # Define which epoch-based fields should have age calculated
 epoch_variables_calculate_age = [
-    "LastPasswdChange",  # example: epoch in seconds
+    "phpgwLastPasswdChange",  # example: epoch in seconds
 ]
 
 def parse_ldap_entries_and_extract_attributes(ldap_entries, attributes_to_extract):
@@ -100,7 +100,7 @@ def sanitize_yaml_value(value):
 if __name__ == "__main__":
     # LDAP Connection Parameters - IMPORTANT: Customize these for your LDAP server!
     # For production use, consider loading these from environment variables or a secure configuration file.
-    LDAP_HOST = 'ldap.server' # Replace with your LDAP server's hostname or IP address
+    LDAP_HOST = 'ldap.com' # Replace with your LDAP server's hostname or IP address
     LDAP_PORT = 636        # Replace with your LDAP server's port (e.g., 636 for LDAPS)
     LDAP_SEARCH_BASE = 'dc=com,dc=br' # Replace with the base DN for your search (e.g., 'ou=Users,dc=example,dc=com')
     LDAP_SEARCH_FILTER = '(objectClass=posixAccount)' # LDAP filter to select entries (e.g., all user accounts)
@@ -233,12 +233,12 @@ if __name__ == "__main__":
                                     epoch_val = int(value)
                                     if epoch_val > 0:
                                         age_seconds = now_epoch - epoch_val
-                                        f_age.write(f'"{clean_uid}": "{age_seconds}"\n')
+                                        f_age.write(f'"{clean_uid}": {age_seconds}\n')   # integer (no quotes)
                                     else:
-                                        f_age.write(f'"{clean_uid}": ""\n')
+                                        f_age.write(f'"{clean_uid}": null\n')            # YAML null
                                 except ValueError:
                                     # Non-numeric or empty value → empty output
-                                    f_age.write(f'"{clean_uid}": ""\n')
+                                    f_age.write(f'"{clean_uid}": null\n')                # YAML null
                         print(f"Successfully generated '{age_filename}'")
                     except Exception as e:
                         print(f"Error writing to output file '{age_filename}': {e}")
@@ -261,3 +261,4 @@ if __name__ == "__main__":
         if ldap_connection_second_pass:
             ldap_connection_second_pass.unbind_s()
             print("Disconnected from LDAP server after second pass.")
+
