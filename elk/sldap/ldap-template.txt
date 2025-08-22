@@ -1,0 +1,13 @@
+PUT _index_template/ldap-template
+{
+  "index_patterns": ["ldap-*"],
+  "template": {
+    "mappings": {
+      "properties": {
+        "server": { "type": "ip" },
+        "client": { "type": "ip" }
+      }
+    }
+  },
+  "priority": 500
+}
