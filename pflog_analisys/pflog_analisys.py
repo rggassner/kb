@@ -1,5 +1,3 @@
-pflog _analisys.py
-
 #!/usr/bin/python3
 import ijson
 import bz2,shutil,os,subprocess
