@@ -10,15 +10,21 @@ SPLITTERS = [
     {
         "name": "split_by_user",
         "split_function": r'user="(?:.*?\()?(?P<username>[a-zA-Z0-9._-]+)\s*(?:\))?"',
-        "filter": [""],  # match all users if filter is [""] or empty
+        "filter": ["usera","userb"],  # match all users if filter is [""] or empty
         "enabled": True
     },
     {
         "name": "split_by_src",
         "split_function": r'src="(?P<src>.*?)"',
-        "filter": [""],
+        "filter": ["10.10.10.10"],
         "enabled": True
     }
+    {
+        "name": "split_by_dst",
+        "split_function": r'dst="(?P<dst>.*?)"',
+        "filter": ["10.10.10.10"],
+        "enabled": True
+    }    
 ]
 
 # Precompile regexes and capture group names for enabled rules
