@@ -1,12 +1,11 @@
 #! venv/bin/python3
 # Replace pixels in a color range using multiple noise/inpainting strategies
-
-import cv2
-import numpy as np
 import os
-from PIL import Image
 import multiprocessing
 import argparse
+import cv2
+import numpy as np
+from PIL import Image
 
 # =========================
 # Helpers
@@ -125,7 +124,40 @@ def inpaint_replace(image_rgb, mask, radius):
 # Worker
 # =========================
 
-def process_file(args):
+def process_file(argsi): # pylint: disable=too-many-locals
+    """
+    Process a single image file by replacing a target color range using the
+    specified method and parameters.
+
+    This function is designed to be called with a tuple of arguments, making it
+    suitable for use with multiprocessing or map-style execution. It loads an
+    input image, builds a mask for pixels within a given color range, and applies
+    one of several replacement strategies (gaussian, adaptive gaussian, poisson,
+    or inpainting). The processed image is then written to the output directory.
+
+    If the output file already exists, the file is skipped. If no pixels match
+    the target color range, the original image is copied unchanged.
+
+    Parameters
+    ----------
+    argsi : tuple
+        A tuple containing the following elements, in order:
+        - filename (str): Name of the image file to process.
+        - method (str): Replacement method to use. One of
+          {"gaussian", "gaussian_adaptive", "poisson", "inpaint"}.
+        - input_path (str): Directory containing the input images.
+        - output_path (str): Directory where processed images are written.
+        - target_color (tuple or list): Target color in RGB space.
+        - color_range (int or tuple): Tolerance or range used to build the color mask.
+        - noise_level (float): Noise or strength parameter used by gaussian/poisson methods.
+        - inpaint_radius (int): Radius used for OpenCV inpainting.
+        - save_mask (bool): Whether to save the generated mask alongside the output.
+
+    Raises
+    ------
+    ValueError
+        If an unknown replacement method is specified.
+    """
     (
         filename,
         method,
@@ -136,7 +168,7 @@ def process_file(args):
         noise_level,
         inpaint_radius,
         save_mask,
-    ) = args
+    ) = argsi
 
     in_path = os.path.join(input_path, filename)
     out_path = os.path.join(output_path, filename)
@@ -145,15 +177,15 @@ def process_file(args):
         print(f"Skipping {filename}")
         return
 
-    image_bgr = cv2.imread(in_path)
+    image_bgr = cv2.imread(in_path) # pylint: disable=no-member
     if image_bgr is None:
         return
 
-    image_rgb = cv2.cvtColor(image_bgr, cv2.COLOR_BGR2RGB)
+    image_rgb = cv2.cvtColor(image_bgr, cv2.COLOR_BGR2RGB) # pylint: disable=no-member
     mask = color_range_mask(image_rgb, target_color, color_range)
 
     if not mask.any():
-        cv2.imwrite(out_path, image_bgr)
+        cv2.imwrite(out_path, image_bgr) # pylint: disable=no-member
         return
 
     if method == "gaussian":
@@ -169,13 +201,13 @@ def process_file(args):
 
     elif method == "inpaint":
         result = inpaint_replace(image_rgb, mask, inpaint_radius)
-        result = cv2.cvtColor(result, cv2.COLOR_RGB2BGR)
+        result = cv2.cvtColor(result, cv2.COLOR_RGB2BGR) # pylint: disable=no-member
 
     else:
         raise ValueError(f"Unknown method: {method}")
 
     save_mask_if_needed(mask, output_path, filename, save_mask)
-    cv2.imwrite(out_path, result)
+    cv2.imwrite(out_path, result) # pylint: disable=no-member
 
 
 # =========================
@@ -228,4 +260,3 @@ if __name__ == "__main__":
 
     with multiprocessing.Pool() as pool:
         pool.map(process_file, work)
-
