@@ -107,22 +107,40 @@ def poisson_replace(image, mask, noise_level):
 
     return result
 
-# =========================
-# Inpainting
-# =========================
 
 def inpaint_replace(image_rgb, mask, radius):
-    return cv2.inpaint(
+    """
+    Replace masked regions in an image using OpenCV inpainting.
+
+    This function fills the regions specified by the mask using the
+    Telea inpainting algorithm. The masked pixels are reconstructed
+    based on surrounding pixel information, producing a smooth and
+    visually consistent result. It is typically used to remove or
+    conceal areas matching a target color or artifact.
+
+    Parameters
+    ----------
+    image_rgb : numpy.ndarray
+        Input image in RGB color space with shape (H, W, 3).
+    mask : numpy.ndarray
+        Single-channel 8-bit mask where non-zero values indicate
+        regions to be inpainted.
+    radius : int
+        Radius of the circular neighborhood used during inpainting.
+        Larger values increase smoothing but may reduce local detail.
+
+    Returns
+    -------
+    numpy.ndarray
+        The inpainted image in RGB color space.
+    """
+    return cv2.inpaint( # pylint: disable=no-member
         image_rgb,
         mask,
         inpaintRadius=radius,
-        flags=cv2.INPAINT_TELEA
+        flags=cv2.INPAINT_TELEA # pylint: disable=no-member
     )
 
-
-# =========================
-# Worker
-# =========================
 
 def process_file(argsi): # pylint: disable=too-many-locals
     """
@@ -260,3 +278,4 @@ if __name__ == "__main__":
 
     with multiprocessing.Pool() as pool:
         pool.map(process_file, work)
+
