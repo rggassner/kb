@@ -43,11 +43,44 @@ def gaussian_replace(image, mask, noise_level):
     return np.clip(img, 0, 255).astype(np.uint8)
 
 
-# =========================
-# Gaussian (adaptive)
-# =========================
-
 def gaussian_adaptive_replace(image_rgb, image_bgr, mask, target_color, noise_level):
+    """
+    Replace masked pixels with distance-adaptive Gaussian noise.
+
+    This function applies Gaussian noise to regions defined by the mask,
+    where the noise strength is modulated by the pixel's distance from a
+    target color in RGB space. Pixels closer to the target color receive
+    stronger noise, while pixels farther away are affected more subtly,
+    resulting in smoother transitions and fewer visible artifacts.
+
+    The computation of color distance and adaptive strength is performed
+    in RGB space, while the noise is applied to the BGR image to preserve
+    OpenCV-compatible output.
+
+    Parameters
+    ----------
+    image_rgb : numpy.ndarray
+        Input image in RGB color space with shape (H, W, 3). Used for
+        computing color distance to the target color.
+    image_bgr : numpy.ndarray
+        Input image in BGR color space with shape (H, W, 3). This image
+        is modified and returned.
+    mask : numpy.ndarray
+        Single-channel mask where non-zero values indicate pixels to be
+        replaced.
+    target_color : tuple or list
+        Target color in RGB space used as the reference for distance
+        computation.
+    noise_level : float
+        Standard deviation of the Gaussian noise. Higher values produce
+        stronger perturbations.
+
+    Returns
+    -------
+    numpy.ndarray
+        The resulting image in BGR color space with adaptively applied
+        Gaussian noise.
+    """
     target = np.array(target_color, dtype=np.float32)
 
     # Distance from target color
@@ -80,10 +113,6 @@ def gaussian_adaptive_replace(image_rgb, image_bgr, mask, target_color, noise_le
 
     return np.clip(img, 0, 255).astype(np.uint8)
 
-
-# =========================
-# Poisson noise
-# =========================
 
 def poisson_replace(image, mask, noise_level):
     """
